@@ -20,12 +20,22 @@ export default function Column({
     socket
 }) {
     const handleDragStart = (e, taskId) => {
-        e.dataTransfer.setData('taskId', taskId);
-        e.dataTransfer.setData('sourceColumn', title);
-        onTaskInteractionStart(taskId);
+        if (getTaskClass(taskId)?.includes('editing')) {
+            e.dataTransfer.setData('taskId', taskId);
+            e.dataTransfer.setData('sourceColumn', title);
+            onTaskInteractionStart(taskId);
+        };
     };
-    const [isDeleting, setIsDeleting] = useState(null)
-    const handleDragOver = (e) => e.preventDefault();
+
+    const [isDeleting, setIsDeleting] = useState(null);
+
+    const handleDragOver = (e) => {
+        e.preventDefault()
+        if (getTaskClass(taskId)?.includes('editing')) {
+            onTaskInteractionEnd(task.id)
+        }
+    };
+
     const handleDelete = (id) => {
         setIsDeleting(id)
         setTimeout(() => {
@@ -51,14 +61,19 @@ export default function Column({
     };
 
     const getTaskClass = (taskId) => {
-        return highlightedTasks[taskId] && highlightedTasks[taskId] !== socket.id
-            ? 'opacity-30 editing'
+
+        const highlightClass = highlightedTasks[taskId] && highlightedTasks[taskId] !== socket.id
+            ? 'opacity-50 editing'
             : 'bg-gray-800 opacity-100';
+
+        console.log(highlightClass)
+        return highlightClass;
     };
 
     const handleEditStart = (id, task) => {
         onTaskEdit(id, task);
         onTaskInteractionStart(id);
+        console.log("Column", editingTask)
     };
 
     const handleSaveTask = (taskId, newContent, newUrgency, newDeadline) => {
@@ -66,11 +81,11 @@ export default function Column({
         onTaskInteractionEnd(taskId);
     };
 
+    // onDragOver={(e) => handleDragOver(e)}
 
     return (
         <div
             className="w-1/3 p-6 pt-0 border border-transparent mx-1 overflow-y-auto h-full bg-black rounded-2xl "
-            onDragOver={handleDragOver}
             onDrop={handleDrop}
         >
             <h2 className="text-xl font-bold sticky top-0 bg-black z-10 p-4 bg-black text-white">
@@ -82,7 +97,7 @@ export default function Column({
                         key={task.id}
                         draggable
                         onDragStart={(e) => handleDragStart(e, task.id)}
-                        onDragEnd={() => onTaskInteractionEnd(task.id)}
+                        onDragEnd={(e) => handleDragOver(e)}
                         className={`p-4 m-2 rounded bg-gray-800 cursor-grab opacity-80 hover:opacity-100 ${getTaskClass(task.id)} ${isDeleting === task.id ? 'animate-ping' : ''}`}
                     >
 
