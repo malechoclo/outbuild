@@ -120,22 +120,25 @@ function App() {
             <div className="flex flex-row mx-1 my-5 bg-none p-4 w-full">
                 <div className="w-3/4 flex flex-row">
                     <div className="flex items-start flex-col w-1/4 mr-4">
-                        <label className="mr-4 text-white">Description</label>
+                        <label 
+                        className={`mr-4 text-white ${errors.description ? 'text-red-300' : ''}`}
+                        
+                        >Description</label>
                         <input
                             type="text"
                             maxLength={50}
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             placeholder="Task description (max 50 chars)"
-                            className={`p-2 w-full h-10 border rounded ${errors.description ? 'border-red-500' : ''}`}
+                            className={`p-2 w-full h-10 border rounded ${errors.description ? 'border-red-500 border-2 ' : ''}`}
                         />
                     </div>
                     <div className="flex items-start flex-col mr-4">
-                        <label className="mr-4 text-white">Urgency</label>
+                        <label className={`mr-4 text-white ${errors.description ? 'text-red-300' : ''}`}>Urgency</label>
                         <select
                             value={taskUrgency}
                             onChange={(e) => setTaskUrgency(e.target.value)} // Updated with `taskUrgency`
-                            className={`h-10 p-2 w-full border rounded ${errors.taskUrgency ? 'border-red-500' : ''}`}
+                            className={`h-10 p-2 w-full border rounded ${errors.taskUrgency ? 'border-red-500 border-2 ' : ''}`}
                         >
                             <option value="">Select urgency</option>
                             <option value="low">Low</option>
@@ -144,12 +147,12 @@ function App() {
                         </select>
                     </div>
                     <div className="flex items-start flex-col mr-4">
-                        <label className="mr-4 text-white">Deadline</label>
+                        <label className={`mr-4 text-white ${errors.description ? 'text-red-300' : ''}`}>Deadline</label>
                         <input
                             type="date"
                             value={deadline}
                             onChange={(e) => setDeadline(e.target.value)}
-                            className={`h-10 p-2 w-full border rounded ${errors.deadline ? 'border-red-500' : ''}`}
+                            className={`h-10 p-2 w-full border rounded ${errors.deadline ? 'border-red-500 border-2 ' : ''}`}
                         />
                     </div>
                     <div className="flex items-start flex-col">
