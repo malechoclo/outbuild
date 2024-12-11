@@ -18,12 +18,12 @@ export default function Column({
                 {title.toUpperCase()}
             </h2>
             <div>
-                {tasks.map((task) => (
+                {tasks}
+                {tasks.length && tasks.map((task) => (
                     <div
                         key={task.id}
-                        className={`p-4 m-2 rounded bg-gray-800 hover:shadow cursor-grab ${
-                            highlightedTasks[task.id] ? 'opacity-50' : ''
-                        }`}
+                        className={`p-4 m-2 rounded bg-gray-800 hover:shadow cursor-grab ${highlightedTasks[task.id] ? 'opacity-50' : ''
+                            }`}
                     >
                         {editingTask === task.id ? (
                             <div className="mt-3">

@@ -16,11 +16,7 @@ function App() {
     const [editingTask, setEditingTask] = useState(null);
     const [editContent, setEditContent] = useState('');
     const [highlightedTasks, setHighlightedTasks] = useState({}); // Track interacting tasks
-    // Convert an object to an array of key-value pairs
-    const objectToArray = (obj) => Object.entries(obj);
-    // Convert an array of key-value pairs back to an object
-    const arrayToObject = (arr) => Object.fromEntries(arr);
-    
+
     useEffect(() => {
         socket.on('update-board', (newBoard) => setBoard(newBoard));
         socket.on('highlight-task', (activeTasks) => setHighlightedTasks(activeTasks));
@@ -42,6 +38,7 @@ function App() {
         };
 
         const updatedBoard = { ...board, todo: [...board.todo, newTask] };
+        
         setBoard(updatedBoard);
         setDescription('');
         setDeadline('');
@@ -58,31 +55,28 @@ function App() {
         setBoard(updatedBoard);
         socket.emit('task-update', updatedBoard);
     };
-    const editTask = (taskId, task) => {
+
+    const editTask = (taskId, content) => {
         setEditingTask(taskId);
-        setEditContent(objectToArray({
-            content: task.content,
-            urgency: task.urgency,
-            deadline: task.deadline
-        }));
+        setEditContent(content);
+        notifyInteraction(taskId);
     };
 
-    const saveTask = (taskId, editArray) => {
-        const updatedTask = arrayToObject(editArray);
+    const saveTask = (taskId, newContent, newUrgency, newDeadline) => {
         const updatedBoard = { ...board };
 
-        // Update the task in the correct column
         Object.keys(updatedBoard).forEach((column) => {
             updatedBoard[column] = updatedBoard[column].map((task) =>
                 task.id === taskId
-                    ? { ...task, ...updatedTask }
+                    ? { ...task, content: newContent, urgency: newUrgency, deadline: newDeadline }
                     : task
             );
         });
 
         setBoard(updatedBoard);
         setEditingTask(null);
-        setEditContent(null);
+        setEditContent('');
+        stopInteraction(taskId);
         socket.emit('task-update', updatedBoard);
     };
 
@@ -176,6 +170,7 @@ function App() {
                         setEditContent={setEditContent}
                         saveTask={saveTask}
                     />
+
                 ))}
             </div>
         </div>
