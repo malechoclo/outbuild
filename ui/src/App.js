@@ -72,28 +72,33 @@ function App() {
 
     const handleTaskMove = (taskId, sourceColumn, destinationColumn, newOrderIndex) => {
         const updatedBoard = { ...board };
-
+    
         // Find the task and its index in the source column
         const taskIndex = updatedBoard[sourceColumn].findIndex((task) => task.id === taskId);
         const [movedTask] = updatedBoard[sourceColumn].splice(taskIndex, 1);
-
-        // Move the task to the destination column
-        updatedBoard[destinationColumn].splice(newOrderIndex, 0, movedTask);
-
+    
+        // Reorder the task within the same column
+        if (sourceColumn === destinationColumn) {
+            updatedBoard[destinationColumn].splice(newOrderIndex, 0, movedTask);
+        } else {
+            // Move the task to the destination column
+            updatedBoard[destinationColumn].splice(newOrderIndex, 0, movedTask);
+        }
+    
         setBoard(updatedBoard); // Update the board state
-        socket.emit('task-update', updatedBoard); // Notify the server
+        socket.emit('task-update', updatedBoard); // Notify other clients
     };
 
     return (
-        <div className="flex flex-col h-screen bg-gradient-to-r from-cyan-700 to-blue-700 pb-2 px-1">
-            <div className="flex items-center m-4">
+        <div className="flex flex-col h-screen bg-gradient-to-r from-cyan-600 to-cyan-700 pb-2 px-1">
+            <div className="flex items-center m-4 bg-cyan-800 p-4">
                 <input
                     type="text"
                     maxLength={50}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Task description (max 50 chars)"
-                    className="mr-5 p-2 w-1/4 border rounded py-3"
+                    className="mr-5 p-2 w-1/4 border rounded"
                 />
                 <button
                     onClick={addTask}

@@ -10,15 +10,15 @@ export default function Column({ title, tasks = [], onTaskMove, onTaskDelete, on
         e.preventDefault(); // Allow the drop event
     };
 
-
     const handleDrop = (e) => {
         e.preventDefault();
         const taskId = e.dataTransfer.getData('taskId');
         const sourceColumn = e.dataTransfer.getData('sourceColumn');
-        const destinationColumn = title;
 
-        if (sourceColumn !== destinationColumn) {
-            onTaskMove(taskId, sourceColumn, destinationColumn, tasks.length); // Append the task to the end
+        // Only move tasks between columns, not within the same column
+        if (sourceColumn !== title) {
+            const destinationColumn = title;
+            onTaskMove(taskId, sourceColumn, destinationColumn, tasks.length); // Append the task to the end of the destination column
         }
     };
 
