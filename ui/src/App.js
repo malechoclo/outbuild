@@ -20,17 +20,30 @@ function App() {
     const [errors, setErrors] = useState({});
     const [clientCount, setClientCount] = useState(0); // State for client count
     const [updateClientCount, setUpdateClientCount] = useState(false); // State for client count
+    const [highlightedTasks, setHighlightedTasks] = useState({});
 
 
 
     useEffect(() => {
+        socket.on('highlight-task', (activeTasks) => {
+            setHighlightedTasks(activeTasks); // Update tasks being interacted with
+        });
+
         socket.on('update-board', (newBoard) => setBoard(newBoard));
-        socket.on('client-count', (count) => handleUserCount(count)); // Update client count
+        socket.on('client-count', (count) => setClientCount(count));
 
         return () => {
-            socket.disconnect();
+            //socket.disconnect();
         };
     }, []);
+
+    const handleInteractionStart = (taskId) => {
+        socket.emit('interact-task', { taskId });
+    };
+
+    const handleInteractionEnd = (taskId) => {
+        socket.emit('stop-interact-task', { taskId });
+    };
 
     const handleUserCount = (count) => {
         setClientCount(count)
@@ -191,9 +204,9 @@ function App() {
                     </span>
 
                     <span className='mr-5 '>Worky</span>
-                    <span class="">
-                        <svg className='h-16 w-16"' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 6.878V6a2.25 2.25 0 0 1 2.25-2.25h7.5A2.25 2.25 0 0 1 18 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 0 0 4.5 9v.878m13.5-3A2.25 2.25 0 0 1 19.5 9v.878m0 0a2.246 2.246 0 0 0-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0 1 21 12v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6c0-.98.626-1.813 1.5-2.122" />
+                    <span >
+                        <svg className='h-16 w-16"' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" >
+                            <path strokeLinecap="round" d="M6 6.878V6a2.25 2.25 0 0 1 2.25-2.25h7.5A2.25 2.25 0 0 1 18 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 0 0 4.5 9v.878m13.5-3A2.25 2.25 0 0 1 19.5 9v.878m0 0a2.246 2.246 0 0 0-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0 1 21 12v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6c0-.98.626-1.813 1.5-2.122" />
                         </svg>
                     </span>
 
@@ -205,9 +218,9 @@ function App() {
                         key={column}
                         title={column}
                         tasks={board[column]}
-                        onTaskMove={handleTaskMove} // Pass the newly defined function
-                        onTaskDelete={(taskId) => deleteTask(taskId)}
-                        onTaskEdit={(taskId, task) => editTask(taskId, task)}
+                        onTaskMove={handleTaskMove}
+                        onTaskDelete={deleteTask}
+                        onTaskEdit={editTask}
                         editingTask={editingTask}
                         editContent={editContent}
                         setEditContent={setEditContent}
@@ -215,7 +228,11 @@ function App() {
                         setEditDeadline={setEditDeadline}
                         editUrgency={editUrgency}
                         setUrgency={setEditUrgency}
-                        saveTask={(id, content, urgency, deadline) => saveTask(id, content, urgency, deadline)}
+                        saveTask={saveTask}
+                        onTaskInteractionStart={handleInteractionStart} // Notify interaction start
+                        onTaskInteractionEnd={handleInteractionEnd} // Notify interaction end
+                        highlightedTasks={highlightedTasks}
+                        socket={socket}
                     />
                 ))}
             </div>
