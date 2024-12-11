@@ -16,23 +16,46 @@ let board = {
     inProgress: [],
     done: [],
 };
+let activeTasks = {};
+
+let connectedClients = 0;
 
 io.on('connection', (socket) => {
+    connectedClients++;
+    io.emit('client-count', connectedClients); // Notify all clients about the new count
+
     console.log('User connected:', socket.id);
 
-    // Send current board to the newly connected client
     socket.emit('update-board', board);
+    socket.emit('highlight-task', activeTasks);
 
     socket.on('task-update', (newBoard) => {
         board = newBoard;
-        socket.broadcast.emit('update-board', board); // Notify all clients
+        socket.broadcast.emit('update-board', board);
+    });
+
+    socket.on('interact-task', ({ taskId }) => {
+        activeTasks[taskId] = socket.id;
+        io.emit('highlight-task', activeTasks);
+    });
+
+    socket.on('stop-interact-task', ({ taskId }) => {
+        delete activeTasks[taskId];
+        io.emit('highlight-task', activeTasks);
     });
 
     socket.on('disconnect', () => {
+        connectedClients--;
+        io.emit('client-count', connectedClients); // Update client count on disconnect
+
+        Object.keys(activeTasks).forEach((taskId) => {
+            if (activeTasks[taskId] === socket.id) delete activeTasks[taskId];
+        });
+        io.emit('highlight-task', activeTasks);
+
         console.log('User disconnected:', socket.id);
     });
 });
-
 server.listen(5001, () => {
     console.log('Server running on http://localhost:5001');
 });
