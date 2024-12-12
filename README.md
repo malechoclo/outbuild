@@ -21,11 +21,13 @@ Server running on http://localhost:5001
 ```
 ### RUN UI
 #### open new terminal
+
 ```bash
 cd ui
 npm start
 ```
 ### If all goes well, you will see the following message. You can now access the application in as many browsers as you wish
+
 ```bash
 Compiled successfully!
 
@@ -44,7 +46,7 @@ webpack compiled successfully
 #### open new terminal
 ```bash
 cd ui
-npm test
+npm test a
 ```
 
 # Known errors:
@@ -52,4 +54,4 @@ npm test
 ## Known errors:
 ### When a task is edited or moved, it changes its appearance for all clients, including the one editing it. 
 
-#### https://cristiandonososilva.cl
+#### Author web:  https://cristiandonososilva.cl
