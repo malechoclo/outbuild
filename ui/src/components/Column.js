@@ -50,11 +50,9 @@ export default function Column({
         }, 500);
     }
 
-    const canEditTask = (taskId) => {
-        return editingTasks[taskId] === socketId || !editingTasks[taskId];
-    };
-
-    const editingTasks = (taskId) => { }
+    const isEditingTasks = (taskId) => {
+        return highlightedTasks[taskId] && highlightedTasks[taskId] !== socket.id
+    }
 
     const handleEditStart = (id, task) => {
         onTaskEdit(id, task);
@@ -69,11 +67,9 @@ export default function Column({
     };
 
     const getTaskClass = (taskId) => {
-
-        const highlightClass = highlightedTasks[taskId] && highlightedTasks[taskId] !== socket.id
+        return isEditingTasks(taskId)
             ? 'opacity-50 editing'
             : 'bg-gray-800 opacity-100';
-        return highlightClass;
     };
 
 
@@ -95,7 +91,7 @@ export default function Column({
                 {tasks.map((task) => (
                     <div
                         key={task.id}
-                        draggable
+                        draggable={isEditingTasks(task.id)}
                         onDragStart={(e) => handleDragStart(e, task.id)}
                         className={`p-4 m-2 rounded bg-gray-800 cursor-grab opacity-80 hover:opacity-100 ${getTaskClass(task.id)} ${isDeleting === task.id ? 'animate-ping' : ''}`}
                     >
