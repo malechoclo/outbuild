@@ -19,31 +19,17 @@ export default function Column({
     highlightedTasks,
     socket
 }) {
-    const [isDeleting, setIsDeleting] = useState(null)
+    const [isDeleting, setIsDeleting] = useState(null);
 
     const handleDragStart = (e, taskId) => {
-        if (getTaskClass(taskId)?.includes('editing')) {
-            e.dataTransfer.setData('taskId', taskId);
-            e.dataTransfer.setData('sourceColumn', title);
-            onTaskInteractionStart(taskId);
-        };
+        e.dataTransfer.setData('taskId', taskId);
+        e.dataTransfer.setData('sourceColumn', title);
+        onTaskInteractionStart(taskId);
     };
 
-
-
-    const handleDelete = (id) => {
-        setIsDeleting(id)
-        setTimeout(() => {
-            onTaskDelete(id);
-        }, 500);
-    }
-    const handleDragOver = (e) => e.preventDefault();
-    // const handleDragOver = (e) => {
-    //     e.preventDefault()
-    //     if (getTaskClass(taskId)?.includes('editing')) {
-    //         onTaskInteractionEnd(task.id)
-    //     }
-    // };
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
 
     const handleDrop = (e) => {
         e.preventDefault();
@@ -56,6 +42,13 @@ export default function Column({
         }
         onTaskInteractionEnd(taskId);
     };
+
+    const handleDelete = (id) => {
+        setIsDeleting(id)
+        setTimeout(() => {
+            onTaskDelete(id);
+        }, 500);
+    }
 
     const canEditTask = (taskId) => {
         return editingTasks[taskId] === socketId || !editingTasks[taskId];
@@ -72,7 +65,7 @@ export default function Column({
     const getUrgencyColor = (urgency) => {
         if (urgency === 'high') return 'bg-red-500';
         if (urgency === 'medium') return 'bg-orange-300';
-        return 'bg-green-500';<
+        return 'bg-green-500';
     };
 
     const getTaskClass = (taskId) => {
@@ -83,25 +76,16 @@ export default function Column({
         return highlightClass;
     };
 
-    // const getTaskClass = (taskId) => {
-    //     return editingTasks[taskId] && editingTasks[taskId] !== socketId
-    //         ? 'bg-red-500 cursor-not-allowed'
-    //         : 'bg-gray-800 cursor-grab';
-    // };
-
 
     const handleSaveTask = (taskId, newContent, newUrgency, newDeadline) => {
         saveTask(taskId, newContent, newUrgency, newDeadline);
         onTaskInteractionEnd(taskId);
     };
 
-
-
-    // onDragOver={(e) => handleDragOver(e)}
-
     return (
         <div
             className="w-1/3 p-6 pt-0 border border-transparent mx-1 overflow-y-auto h-full bg-black rounded-2xl "
+            onDragOver={handleDragOver}
             onDrop={handleDrop}
         >
             <h2 className="text-xl font-bold sticky top-0 bg-black z-10 p-4 bg-black text-white">
@@ -113,7 +97,6 @@ export default function Column({
                         key={task.id}
                         draggable
                         onDragStart={(e) => handleDragStart(e, task.id)}
-                        onDragEnd={(e) => handleDragOver(e)}
                         className={`p-4 m-2 rounded bg-gray-800 cursor-grab opacity-80 hover:opacity-100 ${getTaskClass(task.id)} ${isDeleting === task.id ? 'animate-ping' : ''}`}
                     >
 

@@ -23,7 +23,7 @@ function App() {
     const [clientCount, setClientCount] = useState(0); // State for client count
     const [updateClientCount, setUpdateClientCount] = useState(false); // State for client count
     const [highlightedTasks, setHighlightedTasks] = useState({});
- 
+
 
 
     useEffect(() => {
@@ -74,16 +74,17 @@ function App() {
     };
 
     const handleTaskMove = (taskId, sourceColumn, destinationColumn, newOrderIndex) => {
-        notifyEditingTask(taskId, false); // Notificar que el task ya no está siendo editado
         const updatedBoard = { ...board };
 
-        // Mover el task a otra columna
+        // Encuentra y elimina la tarea de la columna origen
         const taskIndex = updatedBoard[sourceColumn].findIndex((task) => task.id === taskId);
         const [movedTask] = updatedBoard[sourceColumn].splice(taskIndex, 1);
+
+        // Añade la tarea a la columna destino
         updatedBoard[destinationColumn].splice(newOrderIndex, 0, movedTask);
 
         setBoard(updatedBoard);
-        socket.emit('task-update', updatedBoard);
+        socket.emit('task-update', updatedBoard); // Notificar a otros clientes
     };
 
     const addTask = () => {
@@ -186,6 +187,7 @@ function App() {
                             onTaskInteractionEnd={handleInteractionEnd} // Notify interaction end
                             highlightedTasks={highlightedTasks}
                             setEditingTasks={setEditingTasks}
+                            socket
                         />
                     ))}
                 </div>
