@@ -7,6 +7,7 @@ cd api && npm i --force && cd ..;
 ```
 ## STEPS TO RUN:
 ### RUN API
+#### open new terminal
 ```bash
 cd api
 npm start
@@ -19,6 +20,7 @@ npm start
 Server running on http://localhost:5001
 ```
 ### RUN UI
+#### open new terminal
 ```bash
 cd ui
 npm start
@@ -36,6 +38,10 @@ Note that the development build is not optimized.
 To create a production build, use npm run build.
 
 webpack compiled successfully
+```
+## IMPORTANT : you need to have api and ui running before running the tests.
+### RUN TEST
+#### open new terminal
 ```bash
 cd ui
 npm test
