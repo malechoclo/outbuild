@@ -36,17 +36,15 @@ function App() {
         socket.on('task-editing', (editingTasks) => setEditingTasks(editingTasks));
 
         return () => {
-            //socket.disconnect();
+            socket.disconnect();
         };
     }, []);
 
     const handleInteractionStart = (taskId) => {
-        console.log("handleInteractionEnd", socket)
         socket.emit('interact-task', { taskId });
     };
 
     const handleInteractionEnd = (taskId) => {
-        console.log("handleInteractionEnd", socket)
         socket.emit('stop-interact-task', { taskId });
     };
 

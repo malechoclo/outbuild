@@ -57,7 +57,6 @@ export default function Column({
     const handleEditStart = (id, task) => {
         onTaskEdit(id, task);
         onTaskInteractionStart(id);
-        console.log("Column", editingTask)
     };
 
     const getUrgencyColor = (urgency) => {
@@ -68,8 +67,8 @@ export default function Column({
 
     const getTaskClass = (taskId) => {
         return isEditingTasks(taskId)
-            ? 'opacity-60 editing'
-            : 'opacity-100';
+            ? 'opacity-60 editing cursor-no-drop'
+            : 'opacity-100 hover:opacity-100';
     };
 
 
@@ -77,7 +76,7 @@ export default function Column({
         saveTask(taskId, newContent, newUrgency, newDeadline);
         onTaskInteractionEnd(taskId);
     };
-    
+
     return (
         <div
             className={`w-1/3 p-2 pt-0 border border-transparent mx-1 overflow-y-auto h-full bg-indigo-600 rounded-2xl `}
@@ -93,7 +92,7 @@ export default function Column({
                         key={task.id}
                         draggable={!getTaskClass(task.id).includes("editing")}
                         onDragStart={(e) => handleDragStart(e, task.id)}
-                        className={`p-4 m-2 rounded-2xl bg-indigo-800 cursor-grab opacity-90 hover:opacity-100 ${getTaskClass(task.id)} ${isDeleting === task.id ? 'animate-ping' : ''}`}
+                        className={`p-4 m-2 rounded-2xl bg-indigo-800 cursor-grab opacity-90  ${getTaskClass(task.id)} ${isDeleting === task.id ? 'animate-ping' : ''}`}
                     >
                         <div className="flex justify-between items-center ">
                             <div className="flex items-center gap-2">
