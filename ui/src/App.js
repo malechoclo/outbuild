@@ -9,6 +9,10 @@ const initialBoard = {
     done: [],
 };
 
+/**
+ * Main application component that renders the task management board.
+ */
+
 function App() {
     const [board, setBoard] = useState(initialBoard);
     const [editingTasks, setEditingTasks] = useState({}); // Estado para tareas en edición
@@ -24,7 +28,9 @@ function App() {
     const [updateClientCount, setUpdateClientCount] = useState(false); // State for client count
     const [highlightedTasks, setHighlightedTasks] = useState({});
 
-
+    /**
+     * Initializes socket event listeners.
+     */
 
     useEffect(() => {
         socket.on('highlight-task', (activeTasks) => {
@@ -39,23 +45,25 @@ function App() {
             socket.disconnect();
         };
     }, []);
+    /**
+     * Handles the start of user interaction with a task.
+     * @param {string} taskId - ID of the task being interacted with.
+     */
 
     const handleInteractionStart = (taskId) => {
         socket.emit('interact-task', { taskId });
     };
-
+    /**
+     * Handles the end of user interaction with a task.
+     * @param {string} taskId - ID of the task being interacted with.
+     */
     const handleInteractionEnd = (taskId) => {
         socket.emit('stop-interact-task', { taskId });
     };
-
-    const handleUserCount = (count) => {
-        setClientCount(count)
-        setUpdateClientCount(true);
-        setTimeout(() => {
-            setUpdateClientCount(false);
-        }, 500);
-    }
-
+    /**
+     * Validates task creation form fields.
+     * @returns {boolean} True if all fields are valid.
+     */
     const validateFields = () => {
         const fieldErrors = {};
         if (!description.trim()) fieldErrors.description = true;
@@ -64,13 +72,13 @@ function App() {
         setErrors(fieldErrors);
         return Object.keys(fieldErrors).length === 0;
     }
-
-    const notifyEditingTask = (taskId, isEditing) => {
-        const updatedEditingTasks = { ...editingTasks, [taskId]: isEditing ? socket.id : null };
-        setEditingTasks(updatedEditingTasks);
-        socket.emit('task-editing', updatedEditingTasks);
-    };
-
+    /**
+     * Moves a task from one column to another.
+     * @param {string} taskId - ID of the task being moved.
+     * @param {string} sourceColumn - Column the task is being moved from.
+     * @param {string} destinationColumn - Column the task is being moved to.
+     * @param {number} newOrderIndex - Index for the task in the destination column.
+     */
     const handleTaskMove = (taskId, sourceColumn, destinationColumn, newOrderIndex) => {
         const updatedBoard = { ...board };
 
@@ -84,7 +92,9 @@ function App() {
         setBoard(updatedBoard);
         socket.emit('task-update', updatedBoard); // Notificar a otros clientes
     };
-
+    /**
+     * Adds a new task to the board.
+     */
     const addTask = () => {
         if (!validateFields()) return;
 
@@ -108,7 +118,10 @@ function App() {
 
         socket.emit('task-update', updatedBoard);
     };
-
+    /**
+  * Deletes a task from the board.
+  * @param {string} taskId - ID of the task to delete.
+  */
     const deleteTask = (taskId) => {
         const updatedBoard = { ...board };
 
@@ -120,14 +133,24 @@ function App() {
         setBoard(updatedBoard); // Update the state
         socket.emit('task-update', updatedBoard); // Notify other clients
     };
-
+    /**
+     * Prepares a task for editing.
+     * @param {string} taskId - ID of the task to edit.
+     * @param {Object} task - The task object to edit.
+     */
     const editTask = (taskId, task) => {
         setEditingTask(taskId);
         setEditContent(task.content);
         setEditDeadline(task.deadline);
         setEditUrgency(task.urgency); // Use the renamed setter for editing state
     };
-
+    /**
+     * Saves the edited task and updates the board.
+     * @param {string} taskId - ID of the task being saved.
+     * @param {string} newContent - Updated content for the task.
+     * @param {string} newUrgency - Updated urgency level for the task.
+     * @param {string} newDeadline - Updated deadline for the task.
+     */
     const saveTask = (taskId, newContent, newUrgency, newDeadline) => {
         const updatedBoard = { ...board };
 
@@ -149,7 +172,7 @@ function App() {
 
 
     return (
-        <div className="flex flex-col h-screen bg-gradient-to-r from-indigo-600 to-indigo-700 pb-2 px-1">
+        <div className="flex flex-col h-auto bg-gradient-to-r from-indigo-600 to-indigo-700 pb-2 px-1">
             <div className="flex flex-col h-screen bg-gradient-to-r from-indigo-600 to-indigo-700 pb-2 px-1">
                 <Header
                     errors={errors}
