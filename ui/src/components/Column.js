@@ -68,11 +68,11 @@ export default function Column({
         onTaskInteractionStart(id);
         console.log("Column", editingTask)
     };
-    
+
     const getUrgencyColor = (urgency) => {
         if (urgency === 'high') return 'bg-red-500';
         if (urgency === 'medium') return 'bg-orange-300';
-        return 'bg-green-500';
+        return 'bg-green-500';<
     };
 
     const getTaskClass = (taskId) => {
