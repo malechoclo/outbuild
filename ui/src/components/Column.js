@@ -19,6 +19,8 @@ export default function Column({
     highlightedTasks,
     socket
 }) {
+    const [isDeleting, setIsDeleting] = useState(null)
+
     const handleDragStart = (e, taskId) => {
         if (getTaskClass(taskId)?.includes('editing')) {
             e.dataTransfer.setData('taskId', taskId);
@@ -27,14 +29,7 @@ export default function Column({
         };
     };
 
-    const [isDeleting, setIsDeleting] = useState(null);
 
-    const handleDragOver = (e) => {
-        e.preventDefault()
-        if (getTaskClass(taskId)?.includes('editing')) {
-            onTaskInteractionEnd(task.id)
-        }
-    };
 
     const handleDelete = (id) => {
         setIsDeleting(id)
@@ -42,6 +37,14 @@ export default function Column({
             onTaskDelete(id);
         }, 500);
     }
+    const handleDragOver = (e) => e.preventDefault();
+    // const handleDragOver = (e) => {
+    //     e.preventDefault()
+    //     if (getTaskClass(taskId)?.includes('editing')) {
+    //         onTaskInteractionEnd(task.id)
+    //     }
+    // };
+
     const handleDrop = (e) => {
         e.preventDefault();
         const taskId = e.dataTransfer.getData('taskId');
@@ -54,6 +57,18 @@ export default function Column({
         onTaskInteractionEnd(taskId);
     };
 
+    const canEditTask = (taskId) => {
+        return editingTasks[taskId] === socketId || !editingTasks[taskId];
+    };
+
+    const editingTasks = (taskId) => { }
+
+    const handleEditStart = (id, task) => {
+        onTaskEdit(id, task);
+        onTaskInteractionStart(id);
+        console.log("Column", editingTask)
+    };
+    
     const getUrgencyColor = (urgency) => {
         if (urgency === 'high') return 'bg-red-500';
         if (urgency === 'medium') return 'bg-orange-300';
@@ -65,21 +80,22 @@ export default function Column({
         const highlightClass = highlightedTasks[taskId] && highlightedTasks[taskId] !== socket.id
             ? 'opacity-50 editing'
             : 'bg-gray-800 opacity-100';
-
-        console.log(highlightClass)
         return highlightClass;
     };
 
-    const handleEditStart = (id, task) => {
-        onTaskEdit(id, task);
-        onTaskInteractionStart(id);
-        console.log("Column", editingTask)
-    };
+    // const getTaskClass = (taskId) => {
+    //     return editingTasks[taskId] && editingTasks[taskId] !== socketId
+    //         ? 'bg-red-500 cursor-not-allowed'
+    //         : 'bg-gray-800 cursor-grab';
+    // };
+
 
     const handleSaveTask = (taskId, newContent, newUrgency, newDeadline) => {
         saveTask(taskId, newContent, newUrgency, newDeadline);
         onTaskInteractionEnd(taskId);
     };
+
+
 
     // onDragOver={(e) => handleDragOver(e)}
 
