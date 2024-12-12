@@ -24,8 +24,6 @@ io.on('connection', (socket) => {
     connectedClients++;
     io.emit('client-count', connectedClients); // Notify all clients about the new count
 
-    console.log('User connected:', socket.id);
-
     socket.emit('update-board', board);
     socket.emit('highlight-task', activeTasks);
 
