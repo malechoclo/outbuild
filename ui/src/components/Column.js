@@ -80,11 +80,11 @@ export default function Column({
     
     return (
         <div
-            className={`w-1/3 p-2 pt-0 border border-transparent mx-1 overflow-y-auto h-full bg-gray-100 rounded-2xl `}
+            className={`w-1/3 p-2 pt-0 border border-transparent mx-1 overflow-y-auto h-full bg-indigo-600 rounded-2xl `}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
         >
-            <h2 className="text-xl font-bold sticky top-0  bg-gray-100 z-10 p-4 bg-black text-indigo-800">
+            <h2 className="text-xl font-bold sticky top-0  bg-indigo-600 z-10 p-4 bg-black text-gray-300">
                 {title.toUpperCase()}
             </h2>
             <div>
